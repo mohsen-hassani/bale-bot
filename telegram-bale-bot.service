@@ -1,0 +1,33 @@
+[Unit]
+Description=Telegram to Bale Message Forwarding Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=your-username
+Group=your-username
+WorkingDirectory=/path/to/bale_bot
+EnvironmentFile=/path/to/bale_bot/.env
+
+# Python executable path (adjust based on your setup)
+ExecStart=/usr/bin/python3 /path/to/bale_bot/src/main.py
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=telegram-bale-bot
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/path/to/bale_bot/sessions
+
+[Install]
+WantedBy=multi-user.target

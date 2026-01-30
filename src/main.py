@@ -35,7 +35,7 @@ async def main():
     publisher.subscribe(DEFAULT, bale_subscriber)
 
     logger.info("Creating telegram client...")
-    client = TelegramClient("anon", settings.TELEGRAM_API_ID, settings.TELEGRAM_API_HASH)
+    client = TelegramClient("sessions/anon", settings.TELEGRAM_API_ID, settings.TELEGRAM_API_HASH)
     await client.start(phone=settings.TELEGRAM_PHONE)
 
     logger.info("Attaching handlers to Telegram client...")
