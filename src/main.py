@@ -1,11 +1,12 @@
 import logging
-
 import asyncio
+import sys
+
 from telethon import TelegramClient, events
 
-from entities import Message, File, MessageBuilder
+from entities import MessageBuilder
 from pubsub.base import Publisher, Channel
-from pubsub.subscribers import BaleSubscriber, send_file_to_bale
+from pubsub.subscribers import BaleSubscriber
 from config import settings
 
 logger = logging.getLogger(__name__)
@@ -46,15 +47,17 @@ async def main():
     await client.run_until_disconnected()
 
 
-async def main2():
-    await send_file_to_bale(File(
-        id=123,
-        name="file_name.txt",
-        mime_type="application/text",
-        size_in_bytes=23,
-        content=b"12345",
-    ))
-
 if __name__ == "__main__":
-    logger.info("Starting service...\n")
-    asyncio.run(main())
+    try:
+        logger.info("=" * 60)
+        logger.info("Starting service...")
+        logger.info(f"Target Channel: {settings.TARGET_TELEGRAM_CHANNEL}")
+        logger.info(f"Monitoring Channels: {settings.get_channels_list()}")
+        logger.info("=" * 60 + "\n")
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("\nShutdown complete")
+        sys.exit(0)
+    except Exception as e:
+        logger.error(f"Unhandled exception: {e}", exc_info=True)
+        sys.exit(1)

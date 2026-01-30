@@ -27,6 +27,7 @@ class BotSettings(BaseSettings):
     BALE_TARGET_CHAT_ID: int
     FERNET_KEY: str
     CHANNELS: str
+    TARGET_TELEGRAM_CHANNEL: str
 
     @field_validator('FERNET_KEY', mode='before')
     @classmethod
