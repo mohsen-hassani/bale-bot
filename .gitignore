@@ -1,0 +1,7 @@
+/.env
+/.venv/
+/anon.session
+*.session
+*.session-journal
+/sessions/
+/.claude/settings.local.json

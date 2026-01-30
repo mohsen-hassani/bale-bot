@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  bale-bot:
+    build: .
+    container_name: telegram-bale-bot
+    restart: unless-stopped
+    volumes:
+      # Mount session directory for persistent Telegram authentication
+      - ./sessions:/app/sessions
+    environment:
+      # Override these with your actual credentials
+      # Or use a .env file (recommended for security)
+      - TELEGRAM_API_ID=${TELEGRAM_API_ID}
+      - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+      - TELEGRAM_PHONE=${TELEGRAM_PHONE}
+      - BALE_TOKEN=${BALE_TOKEN}
+      - BALE_TARGET_CHAT_ID=${BALE_TARGET_CHAT_ID}
+      - FERNET_KEY=${FERNET_KEY}
+    # If you need to interact with the bot for phone verification on first run:
+    stdin_open: true
+    tty: true
