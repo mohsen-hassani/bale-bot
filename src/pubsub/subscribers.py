@@ -24,8 +24,6 @@ class BaleSubscriber:
         self.cipher = Fernet(settings.get_fernet_key_bytes())
 
     async def __call__(self, message: Message):
-        logger.info("Serializing...")
-
         logger.info("Encrypting...")
         encrypted_message = self.encrypt_message(message)
 
@@ -44,6 +42,8 @@ class BaleSubscriber:
 
 
     def encrypt_message(self, message: Message):
+        logger.info("Serializing...")
+
         raw_message = json.dumps(
             {
                 "payload": message.body,
@@ -56,7 +56,7 @@ class BaleSubscriber:
         compressed = lzma.compress(raw_message.encode('utf-8'))
         encrypted = self.cipher.encrypt(compressed)
         template = "{username}\n\n{payload}"
-        msg = template.format(usrename=encoded_username, payload=encrypted.decode())
+        msg = template.format(username=encoded_username, payload=encrypted.decode())
         return msg
 
 
