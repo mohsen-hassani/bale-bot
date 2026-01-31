@@ -10,6 +10,7 @@ from cryptography.fernet import Fernet
 from bale.bot import Bot
 
 from config import settings
+from encoder import encode_message
 from entities import Message, File, MAX_FILE_SIZE
 
 logger = logging.getLogger(__name__)
@@ -24,17 +25,10 @@ class BaleSubscriber:
 
     async def __call__(self, message: Message):
         logger.info("Serializing...")
-        raw_message = json.dumps(
-            {
-                "payload": message.body,
-                "username": message.source_channel_username,
-                "id": message.source_channel_id,
-                "buttons": [asdict(b) for b in message.buttons],
-                "entities": message.links,
-            }
-        )
+
         logger.info("Encrypting...")
-        encrypted_message = self.encrypt_message(raw_message)
+        encrypted_message = self.encrypt_message(message)
+
         logger.info("Sending to Bale...")
         await send_message_to_bale(encrypted_message)
 
@@ -49,10 +43,21 @@ class BaleSubscriber:
         logger.info("Done!\n\n")
 
 
-    def encrypt_message(self, raw_message: str):
+    def encrypt_message(self, message: Message):
+        raw_message = json.dumps(
+            {
+                "payload": message.body,
+                "id": message.source_channel_id,
+                "buttons": [asdict(b) for b in message.buttons],
+                "entities": message.links,
+            }
+        )
+        encoded_username = encode_message(message.source_channel_username)
         compressed = lzma.compress(raw_message.encode('utf-8'))
         encrypted = self.cipher.encrypt(compressed)
-        return encrypted.decode()
+        template = "{username}\n\n{payload}"
+        msg = template.format(usrename=encoded_username, payload=encrypted.decode())
+        return msg
 
 
 async def send_message_to_bale(message: str) -> None:
