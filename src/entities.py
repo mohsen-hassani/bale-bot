@@ -46,14 +46,14 @@ class MessageBuilder:
         entities: set[str] = set()
 
         if event.message.document and isinstance(event.message.document, Document):
-            photo: File | None = await self._get_photo(event.message.media.photo)
+            photo: File | None = await self._get_photo(event.message)
 
         if (
             event.message.media
             and hasattr(event.message.media, "photo")
             and isinstance(event.message.media.photo, Photo)
         ):
-            photo: File | None = await self._get_photo(event.message.media.photo)
+            photo: File | None = await self._get_photo(event.message)
 
         if event.message.buttons:
             buttons = await self._get_buttons()
@@ -88,9 +88,16 @@ class MessageBuilder:
             photo=photo,
         )
 
-    async def _get_photo(self, photo: Photo) -> File | None:
+    async def _get_photo(self, message) -> File | None:
+        possible_photo = message.media.photo if (
+            message and hasattr(message, "media") and hasattr(message.media, "photo")
+        ) else None
+
+        if not possible_photo:
+            return None
+
         # Get the largest photo size
-        largest_size = photo.sizes[-1]
+        largest_size = possible_photo.sizes[-1]
         photo_size = largest_size.size if hasattr(largest_size, 'size') else 0
 
         if photo_size > MAX_FILE_SIZE:
@@ -104,7 +111,7 @@ class MessageBuilder:
                 file=bytes,  # noqa
             )
             photo = File(
-                id=photo.id,
+                id=possible_photo.id,
                 size_in_bytes=len(photo_content),
                 mime_type="image/jpeg",
                 name="photo.jpg",
