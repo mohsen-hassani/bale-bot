@@ -48,7 +48,11 @@ class MessageBuilder:
         if event.message.document and isinstance(event.message.document, Document):
             photo: File | None = await self._get_photo(event.message.media.photo)
 
-        if event.message.media and isinstance(event.message.media.photo, Photo):
+        if (
+            event.message.media
+            and hasattr(event.message.media, "photo")
+            and isinstance(event.message.media.photo, Photo)
+        ):
             photo: File | None = await self._get_photo(event.message.media.photo)
 
         if event.message.buttons:
