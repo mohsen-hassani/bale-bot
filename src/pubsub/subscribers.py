@@ -2,6 +2,7 @@ import json
 import lzma
 import logging
 from dataclasses import asdict
+from datetime import datetime
 
 import aiohttp
 from bale import InputFile
@@ -49,7 +50,7 @@ class BaleSubscriber:
                 "id": message.source_channel_id,
                 "username": message.source_channel_username,
                 "payload": message.body,
-                "dt": message.dt,
+                "dt": message.dt.isoformat() if isinstance(message.dt, datetime) else None,
                 "buttons": [asdict(b) for b in message.buttons],
                 "entities": message.links,
             }
