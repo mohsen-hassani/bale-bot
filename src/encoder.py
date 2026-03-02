@@ -61,6 +61,6 @@ MAPPER = {
 def encode_message(text: str) -> str:
     logger.info("Encoding username...")
     new_text = []
-    for ch in text:
+    for ch in str(text):
         new_text.append(MAPPER.get(ch, ch))
     return "".join(new_text)
