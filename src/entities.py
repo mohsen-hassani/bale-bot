@@ -63,9 +63,23 @@ class MessageBuilder:
                 if isinstance(entity, MessageEntityTextUrl):
                     entities.add(entity.url)
 
+        channel_id = event.message.chat.id if (
+            event
+            and hasattr(event, "message")
+            and hasattr(event.message, "chat")
+            and hasattr(event.message.chat, "id")
+        ) else "unknown_channel_id"
+
+        channel_username = event.message.chat.id if (
+            event
+            and hasattr(event, "message")
+            and hasattr(event.message, "chat")
+            and hasattr(event.message.chat, "username")
+        )  else "unknown_channel_username"
+
         return Message(
-            source_channel_id=event.message.chat.id,
-            source_channel_username=event.message.chat.username,
+            source_channel_id=channel_id,
+            source_channel_username=channel_username,
             body=payload,
             dt=event.message.date,
             links=list(entities),
