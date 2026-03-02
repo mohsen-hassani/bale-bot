@@ -1,6 +1,7 @@
 import logging
 
 from dataclasses import dataclass
+from datetime import datetime
 
 from telethon import TelegramClient
 from telethon.tl.types import (
@@ -62,6 +63,7 @@ class MessageBuilder:
             source_channel_id=event.message.chat.id,
             source_channel_username=event.message.chat.username,
             body=payload,
+            dt=event.message.date,
             links=list(entities),
             buttons=buttons,
             file=file,
@@ -147,6 +149,7 @@ class Message:
     body: str
     links: list[str]
     buttons: list[Button]
+    dt: datetime | None
     file: File | None = None
     photo: File | None = None
 

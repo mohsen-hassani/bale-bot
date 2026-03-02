@@ -41,13 +41,15 @@ class BaleSubscriber:
         logger.info("Done!\n\n")
 
 
-    def encrypt_message(self, message: Message):
+    def encrypt_message(self, message: Message) -> str:
         logger.info("Serializing...")
 
         raw_message = json.dumps(
             {
-                "payload": message.body,
                 "id": message.source_channel_id,
+                "username": message.source_channel_username,
+                "payload": message.body,
+                "dt": message.dt,
                 "buttons": [asdict(b) for b in message.buttons],
                 "entities": message.links,
             }
